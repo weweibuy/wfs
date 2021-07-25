@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RuleBasePath {
 
-    public static final String PATH = "/brms";
+    public static final String PATH = "/wfs/rule";
 
 }

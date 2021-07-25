@@ -1,5 +1,5 @@
 server:
-  port: 8200
+  port: 8030
 
 spring:
   application:
@@ -12,4 +12,6 @@ spring:
       - id: brms-route
         uri: http://localhost:8050
         predicates:
-        - Path=/brms/**
+        - Path=/wfs/rule/**
+        filters:
+        - StripPrefix=1

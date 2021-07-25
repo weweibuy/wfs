@@ -1,12 +1,17 @@
 package com.weweibuy.wfs.brms.service;
 
-import com.weweibuy.brms.api.model.dto.resp.RuleSetRespDTO;
-import com.weweibuy.framework.common.core.model.dto.CommonDataResponse;
-import com.weweibuy.framework.common.core.model.dto.CommonPageRequest;
-import com.weweibuy.framework.common.core.model.dto.CommonPageResult;
+import com.weweibuy.brms.api.model.eum.ModelTypeEum;
+import com.weweibuy.framework.common.core.utils.BeanCopyUtils;
+import com.weweibuy.framework.common.core.utils.OptionalEnhance;
+import com.weweibuy.wfs.brms.model.resp.RuleSetDetailRespDTO;
 import com.weweibuy.wfs.brms.repository.RuleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
+
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author durenhao
@@ -18,8 +23,20 @@ public class RuleQueryService {
 
     private final RuleRepository ruleRepository;
 
-    public CommonDataResponse<CommonPageResult<RuleSetRespDTO>> ruleSet(String ruleSetKey, String ruleSetName,
-                                                                        CommonPageRequest pageRequest) {
-        return ruleRepository.ruleSet(ruleSetKey, ruleSetName, pageRequest);
+
+    public Mono<Optional<RuleSetDetailRespDTO>> ruleSetDetail(String ruleSetKey) {
+        return ruleRepository.ruleSet(ruleSetKey)
+                .map(ro -> ro.map(r -> BeanCopyUtils.copy(r, RuleSetDetailRespDTO.class)))
+                .flatMap(ro ->
+                        ruleRepository.ruleSetModel(ruleSetKey)
+                                .map(ra -> ra.stream()
+                                        .collect(Collectors.toMap(a -> ModelTypeEum.INPUT.toString().equals(a.getModelType()),
+                                                Function.identity())))
+                                .map(m -> OptionalEnhance.fromOptional(ro)
+                                        .peek(rd -> rd.setModelInput(m.get(true)))
+                                        .peek(rd -> rd.setModelOutput(m.get(false))).toOptional()));
+
     }
+
+
 }

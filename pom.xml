@@ -42,10 +42,25 @@
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>com.weweibuy.framework</groupId>-->
-            <!--<artifactId>common-mvc</artifactId>-->
-        <!--</dependency>-->
+
+        <dependency>
+            <groupId>com.playtika.reactivefeign</groupId>
+            <artifactId>feign-reactor-cloud2</artifactId>
+            <version>2.0.31</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.playtika.reactivefeign</groupId>
+            <artifactId>feign-reactor-spring-configuration</artifactId>
+            <version>3.0.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.playtika.reactivefeign</groupId>
+            <artifactId>feign-reactor-webclient</artifactId>
+            <version>3.0.4</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -59,8 +74,8 @@
         </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>com.weweibuy.framework</groupId>-->
-            <!--<artifactId>common-log</artifactId>-->
+        <!--<groupId>com.weweibuy.framework</groupId>-->
+        <!--<artifactId>common-log</artifactId>-->
         <!--</dependency>-->
 
         <dependency>
