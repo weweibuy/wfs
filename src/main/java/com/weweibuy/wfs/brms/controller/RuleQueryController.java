@@ -2,6 +2,7 @@ package com.weweibuy.wfs.brms.controller;
 
 import com.weweibuy.framework.common.core.model.dto.CommonDataResponse;
 import com.weweibuy.wfs.brms.controller.contant.RuleBasePath;
+import com.weweibuy.wfs.brms.model.resp.RuleAttrDetailRespDTO;
 import com.weweibuy.wfs.brms.model.resp.RuleSetDetailRespDTO;
 import com.weweibuy.wfs.brms.service.RuleQueryService;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +30,12 @@ public class RuleQueryController {
     }
 
     @GetMapping("/rule/attr/detail")
-    public Mono<CommonDataResponse<RuleSetDetailRespDTO>> ruleAttrDetail(String ruleSetKey) {
-        return ruleQueryService.ruleSetDetail(ruleSetKey)
+    public Mono<CommonDataResponse<RuleAttrDetailRespDTO>> ruleAttrDetail(String ruleKey) {
+        return ruleQueryService.ruleAttrDetail(ruleKey)
                 .map(o -> o.map(CommonDataResponse::success)
                         .orElse(CommonDataResponse.success(null)));
     }
+
 
 
 

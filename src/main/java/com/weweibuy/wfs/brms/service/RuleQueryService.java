@@ -3,6 +3,7 @@ package com.weweibuy.wfs.brms.service;
 import com.weweibuy.brms.api.model.eum.ModelTypeEum;
 import com.weweibuy.framework.common.core.utils.BeanCopyUtils;
 import com.weweibuy.framework.common.core.utils.OptionalEnhance;
+import com.weweibuy.wfs.brms.model.resp.RuleAttrDetailRespDTO;
 import com.weweibuy.wfs.brms.model.resp.RuleSetDetailRespDTO;
 import com.weweibuy.wfs.brms.repository.RuleRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,4 +40,7 @@ public class RuleQueryService {
     }
 
 
+    public Mono<Optional<RuleAttrDetailRespDTO>> ruleAttrDetail(String ruleSetKey) {
+        return Mono.empty();
+    }
 }

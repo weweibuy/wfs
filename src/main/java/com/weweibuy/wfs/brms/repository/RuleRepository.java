@@ -1,5 +1,7 @@
 package com.weweibuy.wfs.brms.repository;
 
+import com.weweibuy.brms.api.model.dto.resp.RuleActionRespDTO;
+import com.weweibuy.brms.api.model.dto.resp.RuleConditionRespDTO;
 import com.weweibuy.brms.api.model.dto.resp.RuleSetModelRespDTO;
 import com.weweibuy.brms.api.model.dto.resp.RuleSetRespDTO;
 import com.weweibuy.framework.common.core.model.dto.CommonDataResponse;
@@ -41,5 +43,18 @@ public class RuleRepository {
                 .map(c -> Optional.ofNullable(c.getData())
                         .orElse(Collections.emptyList()));
     }
+
+    public Mono<List<RuleActionRespDTO>> ruleAction(String ruleSetKey) {
+        return ruleQueryClient.ruleAction(ruleSetKey)
+                .map(c -> Optional.ofNullable(c.getData())
+                        .orElse(Collections.emptyList()));
+    }
+
+    public Mono<List<RuleConditionRespDTO>> ruleCondition(String ruleSetKey) {
+        return ruleQueryClient.ruleCondition(ruleSetKey)
+                .map(c -> Optional.ofNullable(c.getData())
+                        .orElse(Collections.emptyList()));
+    }
+
 
 }
