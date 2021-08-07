@@ -35,7 +35,7 @@ public interface RuleQueryClient {
     @GetMapping("/rule-set/model")
     Mono<CommonDataResponse<List<RuleSetModelRespDTO>>> ruleSetModel(@RequestParam("ruleSetKey") String ruleSetKey);
 
-    @GetMapping("/rule-set/model/attr")
+    @GetMapping("/model/attr")
     Mono<CommonDataResponse<List<RuleModelAttrRespDTO>>> ruleSetModelAttr(@RequestParam("modelKey") String modelKey);
 
     @GetMapping("/rule/condition")
@@ -46,6 +46,12 @@ public interface RuleQueryClient {
 
     @GetMapping("/rule/hit-log/list")
     Mono<CommonDataResponse<CommonPageResult<RuleHitLogRespDTO>>> ruleHitLog(@SpringQueryMap RuleHitLogReqDTO query);
+
+    @GetMapping("/rule")
+    Mono<CommonDataResponse<RuleRespDTO>> rule(@RequestParam("ruleKey") String ruleKey);
+
+    @GetMapping("/model")
+    Mono<CommonDataResponse<ModelRespDTO>> model(@RequestParam("modelKey") String modelKey);
 
 
 }

@@ -1,8 +1,11 @@
 package com.weweibuy.wfs.brms.service;
 
+import com.weweibuy.brms.api.model.dto.resp.RuleActionRespDTO;
+import com.weweibuy.brms.api.model.dto.resp.RuleConditionRespDTO;
 import com.weweibuy.brms.api.model.eum.ModelTypeEum;
 import com.weweibuy.framework.common.core.utils.BeanCopyUtils;
 import com.weweibuy.framework.common.core.utils.OptionalEnhance;
+import com.weweibuy.wfs.brms.manager.RuleQueryManager;
 import com.weweibuy.wfs.brms.model.resp.RuleAttrDetailRespDTO;
 import com.weweibuy.wfs.brms.model.resp.RuleSetDetailRespDTO;
 import com.weweibuy.wfs.brms.repository.RuleRepository;
@@ -10,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -23,6 +27,8 @@ import java.util.stream.Collectors;
 public class RuleQueryService {
 
     private final RuleRepository ruleRepository;
+
+    private final RuleQueryManager ruleQueryManager;
 
 
     public Mono<Optional<RuleSetDetailRespDTO>> ruleSetDetail(String ruleSetKey) {
@@ -40,7 +46,14 @@ public class RuleQueryService {
     }
 
 
-    public Mono<Optional<RuleAttrDetailRespDTO>> ruleAttrDetail(String ruleSetKey) {
+    public Mono<Optional<RuleAttrDetailRespDTO>> rule(String ruleSetKey) {
+        Mono<List<RuleConditionRespDTO>> listList = ruleRepository.ruleCondition(ruleSetKey);
+        Mono<List<RuleActionRespDTO>> ruleAction = ruleRepository.ruleAction(ruleSetKey);
         return Mono.empty();
+    }
+
+
+    public Mono<RuleAttrDetailRespDTO> ruleAttrDetail(String ruleKey) {
+        return ruleQueryManager.ruleTranslate(ruleKey);
     }
 }

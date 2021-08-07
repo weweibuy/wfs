@@ -32,11 +32,8 @@ public class RuleQueryController {
     @GetMapping("/rule/attr/detail")
     public Mono<CommonDataResponse<RuleAttrDetailRespDTO>> ruleAttrDetail(String ruleKey) {
         return ruleQueryService.ruleAttrDetail(ruleKey)
-                .map(o -> o.map(CommonDataResponse::success)
-                        .orElse(CommonDataResponse.success(null)));
+                .map(CommonDataResponse::success);
     }
-
-
 
 
 }
