@@ -44,6 +44,7 @@ public class RuleActionWithDescRespDTO extends RuleActionRespDTO {
 
     public void actionDesc(RuleActionValueTypeEum actionValueType,
                            String attrDesc, Map<String, String> inputAttrMap) {
+        this.attrNameDesc = attrDesc;
         this.actionDesc = actionDesc0(actionValueType, attrDesc, inputAttrMap);
     }
 
