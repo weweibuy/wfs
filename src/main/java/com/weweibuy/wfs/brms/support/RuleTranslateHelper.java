@@ -4,18 +4,15 @@ import com.weweibuy.brms.api.model.dto.resp.ModelRespDTO;
 import com.weweibuy.brms.api.model.dto.resp.RuleModelAttrRespDTO;
 import com.weweibuy.brms.api.model.dto.resp.RuleSetModelRespDTO;
 import com.weweibuy.brms.api.model.eum.ModelAttrTypeEum;
+import com.weweibuy.framework.common.core.utils.BeanCopyUtils;
+import com.weweibuy.wfs.brms.model.resp.RuleModelAttrDescRespDTO;
 import com.weweibuy.wfs.brms.repository.RuleRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -29,49 +26,30 @@ public class RuleTranslateHelper {
     private final RuleRepository ruleRepository;
 
 
-    public Mono<Map<String, String>> translateAttr(RuleSetModelRespDTO ruleSetModel, String keySeparator) {
-        Map<String, String> container = new HashMap<>();
-        return ruleRepository.model(ruleSetModel.getModelKey())
-                .flatMap(mo ->
-                        mo.map(m -> translateAttr(m, "",
-                                m.getModelDesc(), keySeparator, container))
-                                .orElse(Mono.empty()));
+    public List<RuleModelAttrDescRespDTO> translateAttr(RuleSetModelRespDTO ruleSetModel, String keySeparator) {
+        List<RuleModelAttrDescRespDTO> modelAttrDescList = new ArrayList<>();
+        ruleRepository.model(ruleSetModel.getModelKey())
+                .ifPresent(m -> translateAttr(m, "", m.getModelDesc(), keySeparator, modelAttrDescList));
+        return modelAttrDescList;
     }
 
-
-    private Mono<Map<String, String>> translateAttr(ModelRespDTO model, String lastKey, String lastName, String keySeparator,
-                                                    Map<String, String> container) {
-        return ruleRepository.ruleSetModelAttr(model.getModelKey())
-                .map(mal -> mal.stream()
-                        .collect(Collectors.groupingBy(a -> ModelAttrTypeEum.OBJECT.toString().equals(a.getAttrType()))))
-                .flatMap(isObjectMap -> {
-                    List<RuleModelAttrRespDTO> noObjectAttrList = isObjectMap.get(false);
-                    Mono<Map<String, String>> mono1 = Mono.just(new HashMap<>());
-                    if (CollectionUtils.isNotEmpty(noObjectAttrList)) {
-                        noObjectAttrList.forEach(a ->
-                                container.put(key(lastKey, a.getAttrName(), keySeparator), lastName + "." + a.getAttrDesc()));
-                        mono1 = Mono.just(container);
-                    }
-                    List<RuleModelAttrRespDTO> objectAttrList = isObjectMap.get(true);
-                    Mono<Map<String, String>> mono2 = Mono.just(new HashMap<>());
-                    if (CollectionUtils.isNotEmpty(objectAttrList)) {
-                        mono2 = Flux.fromIterable(objectAttrList)
-                                .flatMap(a -> ruleRepository.model(a.getAttrModelKeyRef())
-                                        .flatMap(mao -> mao.map(m ->
-                                                translateAttr(m, key(lastKey, a.getAttrName(), keySeparator),
-                                                        lastName + "." + a.getAttrDesc(), keySeparator, container))
-                                                .orElse(Mono.empty())))
-                                .reduce((a, b) -> {
-                                            a.putAll(b);
-                                            return a;
-                                        }
-                                );
-                    }
-                    return mono1.zipWith(mono2, (a, b) -> {
-                        a.putAll(b);
-                        return a;
-                    });
-                });
+    private void translateAttr(ModelRespDTO model, String lastKey, String lastName, String keySeparator, List<RuleModelAttrDescRespDTO> container) {
+        List<RuleModelAttrRespDTO> modelAttrList = ruleRepository.ruleSetModelAttr(model.getModelKey());
+        Map<Boolean, List<RuleModelAttrRespDTO>> isObjectMap = modelAttrList.stream()
+                .collect(Collectors.groupingBy(a -> ModelAttrTypeEum.OBJECT.toString().equals(a.getAttrType())));
+        List<RuleModelAttrRespDTO> noObjectAttrList = isObjectMap.get(false);
+        if (CollectionUtils.isNotEmpty(noObjectAttrList)) {
+            noObjectAttrList.stream()
+                    .map(a -> BeanCopyUtils.copy(a, RuleModelAttrDescRespDTO.class))
+                    .peek(a -> a.fullAttrAndDesc(key(lastKey, a.getAttrName(), keySeparator), desc(lastName, a.getAttrDesc())))
+                    .forEach(container::add);
+        }
+        List<RuleModelAttrRespDTO> objectAttrList = isObjectMap.get(true);
+        if (CollectionUtils.isNotEmpty(objectAttrList)) {
+            objectAttrList.forEach(a -> ruleRepository.model(a.getAttrModelKeyRef())
+                    .ifPresent(m -> translateAttr(m, key(lastKey, a.getAttrName(), keySeparator),
+                            desc(lastName, a.getAttrDesc()), keySeparator, container)));
+        }
 
     }
 
@@ -81,5 +59,10 @@ public class RuleTranslateHelper {
                 .map(l -> l + keySeparator + currentKey)
                 .orElse(currentKey);
     }
+
+    private String desc(String lastName, String attrDesc) {
+        return lastName + "." + attrDesc;
+    }
+
 
 }

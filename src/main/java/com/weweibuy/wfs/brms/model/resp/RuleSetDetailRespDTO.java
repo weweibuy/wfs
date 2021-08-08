@@ -47,4 +47,9 @@ public class RuleSetDetailRespDTO {
      */
     private LocalDateTime updateTime;
 
+    public void model(RuleSetModelRespDTO in, RuleSetModelRespDTO out) {
+        this.modelInput = in;
+        this.modelOutput = out;
+    }
+
 }

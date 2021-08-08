@@ -33,19 +33,29 @@ public class RuleConditionWithDescRespDTO extends RuleConditionRespDTO {
      */
     private String conditionDesc;
 
+    /**
+     * 当前使用的模型属性
+     */
+    private RuleModelAttrDescRespDTO modelAttr;
+
+
     public static RuleConditionWithDescRespDTO fromRuleCondition(RuleConditionRespDTO ruleConditionRespDTO) {
         return BeanCopyUtils.copy(ruleConditionRespDTO, RuleConditionWithDescRespDTO.class);
     }
 
-    public void conditionDesc(String attrName) {
-        this.attrNameDesc = attrName;
-        OperatorEum.operatorEum(getConditionOperator())
-                .map(OperatorEum::getDesc)
-                .ifPresent(o -> this.conditionOperatorDesc = o);
-        ConditionLogicalOperatorEum.fromCode(getLogicalOperator())
-                .map(ConditionLogicalOperatorEum::getDesc)
-                .ifPresent(d -> this.logicalOperatorDesc = d);
-        this.conditionDesc = attrName + " " + getConditionOperator() + " " + getConditionValue();
+    public void conditionDesc(RuleModelAttrDescRespDTO modelAttr) {
+        if (modelAttr != null) {
+            this.modelAttr = modelAttr;
+            this.attrNameDesc = modelAttr.getFullAttrNameDesc();
+            OperatorEum.operatorEum(getConditionOperator())
+                    .map(OperatorEum::getDesc)
+                    .ifPresent(o -> this.conditionOperatorDesc = o);
+            ConditionLogicalOperatorEum.fromCode(getLogicalOperator())
+                    .map(ConditionLogicalOperatorEum::getDesc)
+                    .ifPresent(d -> this.logicalOperatorDesc = d);
+            this.conditionDesc = attrNameDesc + " " + getConditionOperator() + " " + getConditionValue();
+
+        }
     }
 
 }

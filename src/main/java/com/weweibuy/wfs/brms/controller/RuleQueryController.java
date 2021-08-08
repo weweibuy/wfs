@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
 
 /**
  * @author durenhao
@@ -23,16 +22,13 @@ public class RuleQueryController {
     private final RuleQueryService ruleQueryService;
 
     @GetMapping("/rule-set/detail")
-    public Mono<CommonDataResponse<RuleSetDetailRespDTO>> ruleSetDetail(String ruleSetKey) {
-        return ruleQueryService.ruleSetDetail(ruleSetKey)
-                .map(o -> o.map(CommonDataResponse::success)
-                        .orElse(CommonDataResponse.success(null)));
+    public CommonDataResponse<RuleSetDetailRespDTO> ruleSetDetail(String ruleSetKey) {
+        return CommonDataResponse.success(ruleQueryService.ruleSetDetail(ruleSetKey));
     }
 
     @GetMapping("/rule/attr/detail")
-    public Mono<CommonDataResponse<RuleAttrDetailRespDTO>> ruleAttrDetail(String ruleKey) {
-        return ruleQueryService.ruleAttrDetail(ruleKey)
-                .map(CommonDataResponse::success);
+    public CommonDataResponse<RuleAttrDetailRespDTO> ruleAttrDetail(String ruleKey) {
+        return CommonDataResponse.success(ruleQueryService.ruleAttrDetail(ruleKey));
     }
 
 

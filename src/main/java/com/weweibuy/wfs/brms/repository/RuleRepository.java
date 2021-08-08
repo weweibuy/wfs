@@ -7,7 +7,6 @@ import com.weweibuy.framework.common.core.model.dto.CommonPageResult;
 import com.weweibuy.wfs.brms.client.RuleQueryClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,48 +23,50 @@ public class RuleRepository {
     private final RuleQueryClient ruleQueryClient;
 
 
-    public Mono<CommonDataResponse<CommonPageResult<RuleSetRespDTO>>> ruleSet(String ruleSetKey, String ruleSetName,
-                                                                              CommonPageRequest pageRequest) {
-        return ruleQueryClient.ruleSet(ruleSetKey, ruleSetName, pageRequest);
+    public CommonPageResult<RuleSetRespDTO> ruleSet(String ruleSetKey, String ruleSetName,
+                                                    CommonPageRequest pageRequest) {
+        return Optional.ofNullable(ruleQueryClient.ruleSet(ruleSetKey, ruleSetName, pageRequest))
+                .map(CommonDataResponse::getData)
+                .orElse(CommonPageResult.empty());
     }
 
-    public Mono<Optional<RuleSetRespDTO>> ruleSet(String ruleSetKey) {
-        return ruleQueryClient.ruleSet(ruleSetKey)
-                .map(r -> Optional.ofNullable(r.getData()));
+    public Optional<RuleSetRespDTO> ruleSet(String ruleSetKey) {
+        return Optional.ofNullable(ruleQueryClient.ruleSet(ruleSetKey))
+                .map(CommonDataResponse::getData);
     }
 
 
-    public Mono<List<RuleSetModelRespDTO>> ruleSetModel(String ruleSetKey) {
-        return ruleQueryClient.ruleSetModel(ruleSetKey)
-                .map(c -> Optional.ofNullable(c.getData())
-                        .orElse(Collections.emptyList()));
+    public List<RuleSetModelRespDTO> ruleSetModel(String ruleSetKey) {
+        return Optional.ofNullable(ruleQueryClient.ruleSetModel(ruleSetKey))
+                .map(CommonDataResponse::getData)
+                .orElse(Collections.emptyList());
     }
 
-    public Mono<List<RuleActionRespDTO>> ruleAction(String ruleSetKey) {
-        return ruleQueryClient.ruleAction(ruleSetKey)
-                .map(c -> Optional.ofNullable(c.getData())
-                        .orElse(Collections.emptyList()));
+    public List<RuleActionRespDTO> ruleAction(String ruleSetKey) {
+        return Optional.ofNullable(ruleQueryClient.ruleAction(ruleSetKey))
+                .map(CommonDataResponse::getData)
+                .orElse(Collections.emptyList());
     }
 
-    public Mono<List<RuleConditionRespDTO>> ruleCondition(String ruleSetKey) {
-        return ruleQueryClient.ruleCondition(ruleSetKey)
-                .map(c -> Optional.ofNullable(c.getData())
-                        .orElse(Collections.emptyList()));
+    public List<RuleConditionRespDTO> ruleCondition(String ruleSetKey) {
+        return Optional.ofNullable(ruleQueryClient.ruleCondition(ruleSetKey))
+                .map(CommonDataResponse::getData)
+                .orElse(Collections.emptyList());
     }
 
-    public Mono<Optional<RuleRespDTO>> rule(String ruleKey) {
-        return ruleQueryClient.rule(ruleKey)
-                .map(c -> Optional.ofNullable(c.getData()));
+    public Optional<RuleRespDTO> rule(String ruleKey) {
+        return Optional.ofNullable(ruleQueryClient.rule(ruleKey))
+                .map(CommonDataResponse::getData);
     }
 
-    public Mono<List<RuleModelAttrRespDTO>> ruleSetModelAttr(String modelKey) {
-        return ruleQueryClient.ruleSetModelAttr(modelKey)
-                .map(c -> Optional.ofNullable(c.getData())
-                        .orElse(Collections.emptyList()));
+    public List<RuleModelAttrRespDTO> ruleSetModelAttr(String modelKey) {
+        return Optional.ofNullable(ruleQueryClient.ruleSetModelAttr(modelKey))
+                .map(CommonDataResponse::getData)
+                .orElse(Collections.emptyList());
     }
 
-    public Mono<Optional<ModelRespDTO>> model(String modelKey) {
-        return ruleQueryClient.model(modelKey)
-                .map(c -> Optional.ofNullable(c.getData()));
+    public Optional<ModelRespDTO> model(String modelKey) {
+        return Optional.ofNullable(ruleQueryClient.model(modelKey))
+                .map(CommonDataResponse::getData);
     }
 }

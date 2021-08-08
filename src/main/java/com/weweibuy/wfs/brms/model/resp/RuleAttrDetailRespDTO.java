@@ -17,6 +17,16 @@ public class RuleAttrDetailRespDTO {
     private List<RuleConditionWithDescRespDTO> condition;
 
     /**
+     * 输入模型描述
+     */
+    private List<RuleModelAttrDescRespDTO> inputModel;
+
+    /**
+     * 输出模型描述
+     */
+    private List<RuleModelAttrDescRespDTO> outputModel;
+
+    /**
      * 规则动作描述
      */
     private List<RuleActionWithDescRespDTO> action;
